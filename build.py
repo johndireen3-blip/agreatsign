@@ -14,6 +14,32 @@ SRC, DIST, PREV = ROOT / "src", ROOT / "dist", ROOT / "preview"
 SITE = "https://agreatsign.si"
 TODAY = datetime.date.today().isoformat()
 
+# Charter rule 7 (truthful about who did what). Pages are researched and written with
+# Claude and directed by Fr. John; a page he wrote himself sets "credit": "fr-john" in
+# its front matter. Fr. John is named as founder, never as author of pages he did not write.
+CREDIT_CLAUDE = "Researched and written with Claude, an AI model made by Anthropic. Directed by Fr. John."
+CREDIT_FR_JOHN = "Written by Fr. John."
+INDEPENDENCE = ("An independent project. Fr. John is a Catholic diocesan priest, but this project is his own "
+                "and is not affiliated with or endorsed by his diocese, the USCCB, Anthropic, or any other organization.")
+FOUNDER = {"@type": "Person", "name": "Fr. John", "url": SITE + "/about", "jobTitle": "Catholic diocesan priest",
+           "description": "Founder and director of A Great Sign"}
+SITE_ORG = {"@type": "Organization", "name": "A Great Sign", "url": SITE + "/", "founder": FOUNDER}
+
+def credit_of(meta):
+    return CREDIT_FR_JOHN if meta.get("credit") == "fr-john" else CREDIT_CLAUDE
+
+def fix_ld(ld, meta):
+    """Name the true author in structured data and repeat the page's credit line."""
+    if not isinstance(ld, dict) or "author" not in ld:
+        return ld
+    ld = dict(ld)
+    if meta.get("credit") == "fr-john":
+        ld["author"] = FOUNDER
+    else:
+        ld["author"] = SITE_ORG
+    ld["creditText"] = credit_of(meta)
+    return ld
+
 NAV = [
     ("/", "Home"),
     ("/the-bible", "The Bible"),
@@ -92,7 +118,7 @@ def page(slug, meta, body):
         crumbs = ('<script type="application/ld+json">' +
                   json.dumps({"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": items}) +
                   "</script>")
-    ld = meta.get("ld", "")
+    ld = fix_ld(meta.get("ld", ""), meta)
     if ld:
         ld = '<script type="application/ld+json">' + json.dumps(ld) + "</script>"
     title = meta["title"]
@@ -130,10 +156,12 @@ def page(slug, meta, body):
 <footer class="site-foot"><div class="wrap">
 <div class="cols">
 <div><h4>A Great Sign</h4><p>Biblical prophecy, approved Marian apparitions and the witness of the Fathers and saints, read with the Catholic Church.</p></div>
-<div><h4>Explore</h4><ul>{''.join(f'<li><a href="{h}">{t}</a></li>' for h, t in NAV[1:])}<li><a href="/contact">Contact</a></li></ul></div>
+<div><h4>Explore</h4><ul>{''.join(f'<li><a href="{h}">{t}</a></li>' for h, t in NAV[1:])}<li><a href="/contact">Contact</a></li><li><a href="/how-this-site-is-made">How This Site Is Made</a></li></ul></div>
 <div><h4>Related study</h4><ul><li><a href="https://thelambsvictory.org/">The Lamb's Victory</a>: Revelation chapter by chapter</li></ul></div>
 </div>
-<p class="fine">© {datetime.date.today().year} Fr. John · Scripture quotations are from the New American Bible, Revised Edition © 2010, 1991, 1986, 1970 Confraternity of Christian Doctrine, Washington, D.C., used by permission. All rights reserved. · This site is offered for prayerful study and is not an official publication of any diocese.</p>
+<p class="credit">{credit_of(meta)} <a href="/how-this-site-is-made">How this site is made</a></p>
+<p class="fine">{INDEPENDENCE}</p>
+<p class="fine">© {datetime.date.today().year} Fr. John · Scripture quotations are from the New American Bible, Revised Edition © 2010, 1991, 1986, 1970 Confraternity of Christian Doctrine, Washington, D.C., used by permission. All rights reserved.</p>
 </div></footer>
 <script>
 document.querySelector('.nav-toggle').addEventListener('click',function(){{var n=document.getElementById('nav');var o=n.classList.toggle('open');this.setAttribute('aria-expanded',o)}});
