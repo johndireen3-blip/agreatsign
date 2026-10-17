@@ -146,3 +146,8 @@ a.sref:hover{color:var(--blue);text-decoration-style:solid}
 .key-grid p{margin:6px 0;font-size:.96rem}
 .key .badge{min-width:92px;text-align:center;margin-right:6px}
 .key-more{font-family:var(--sans);font-size:.85rem;margin:8px 0 0}
+
+.timeline{margin:20px 0 24px}
+.timeline-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.timeline svg{display:block;width:100%;min-width:640px;height:auto}
+.timeline figcaption{font-family:var(--sans);font-size:.85rem;color:#5b6474;margin-top:8px}
