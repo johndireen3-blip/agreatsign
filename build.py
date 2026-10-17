@@ -13,6 +13,9 @@ ROOT = pathlib.Path(__file__).parent
 SRC, DIST, PREV = ROOT / "src", ROOT / "dist", ROOT / "preview"
 SITE = "https://agreatsign.si"
 TODAY = datetime.date.today().isoformat()
+# Changes whenever style.css changes, so browsers holding a week-old copy fetch the new one.
+import hashlib
+CSS_VERSION = hashlib.md5((ROOT / "assets" / "style.css").read_bytes()).hexdigest()[:8]
 
 # Charter rule 7 (truthful about who did what). Pages are researched and written with
 # Claude and directed by Fr. John; a page he wrote himself sets "credit": "fr-john" in
@@ -140,7 +143,7 @@ def page(slug, meta, body):
 <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Inter:wght@400;600;700&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/assets/style.css">
+<link rel="stylesheet" href="/assets/style.css?v={CSS_VERSION}">
 {crumbs}{ld}
 </head>
 <body>
