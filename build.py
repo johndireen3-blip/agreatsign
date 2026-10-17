@@ -25,6 +25,11 @@ FOUNDER = {"@type": "Person", "name": "Fr. John", "url": SITE + "/about", "jobTi
            "description": "Founder and director of A Great Sign"}
 SITE_ORG = {"@type": "Organization", "name": "A Great Sign", "url": SITE + "/", "founder": FOUNDER}
 
+# Default image for shared links: Velázquez, The Coronation of the Virgin (public domain).
+DEFAULT_IMAGE = "/assets/og-coronation.jpg"
+DEFAULT_IMAGE_ALT = ("Diego Velázquez, The Coronation of the Virgin: Christ and God the Father hold a crown of "
+                     "roses over Mary, with the dove of the Holy Spirit above")
+
 def credit_of(meta):
     return CREDIT_FR_JOHN if meta.get("credit") == "fr-john" else CREDIT_CLAUDE
 
@@ -136,7 +141,12 @@ def page(slug, meta, body):
 <meta property="og:description" content="{meta['description']}">
 <meta property="og:url" content="{SITE}{path}">
 <meta property="og:locale" content="en_US">
-<meta name="twitter:card" content="summary">
+<meta property="og:image" content="{SITE}{meta.get('image', DEFAULT_IMAGE)}">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="{meta.get('image_alt', DEFAULT_IMAGE_ALT)}">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="{SITE}{meta.get('image', DEFAULT_IMAGE)}">
 <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Inter:wght@400;600;700&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">

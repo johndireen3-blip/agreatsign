@@ -146,3 +146,7 @@ a.sref:hover{color:var(--blue);text-decoration-style:solid}
 .key-grid p{margin:6px 0;font-size:.96rem}
 .key .badge{min-width:92px;text-align:center;margin-right:6px}
 .key-more{font-family:var(--sans);font-size:.85rem;margin:8px 0 0}
+
+.feature{margin:32px 0 0}
+.feature img{display:block;width:100%;height:auto;max-width:100%;border-radius:10px;box-shadow:0 10px 30px rgba(20,40,77,.18)}
+.feature figcaption{font-family:var(--sans);font-size:.8rem;color:#5b6474;margin-top:10px;line-height:1.5}
