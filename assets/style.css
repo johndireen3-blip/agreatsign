@@ -151,3 +151,6 @@ a.sref:hover{color:var(--blue);text-decoration-style:solid}
 .timeline-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
 .timeline svg{display:block;width:100%;min-width:640px;height:auto}
 .timeline figcaption{font-family:var(--sans);font-size:.85rem;color:#5b6474;margin-top:8px}
+.dates{margin:4px 0 24px}
+.dates summary{cursor:pointer;font-family:var(--sans);font-weight:600;font-size:.9rem;color:var(--blue);padding:6px 0}
+.dates summary:hover{color:var(--gold)}
