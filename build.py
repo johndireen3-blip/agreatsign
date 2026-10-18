@@ -31,16 +31,35 @@ SITE_ORG = {"@type": "Organization", "name": "A Great Sign", "url": SITE + "/", 
 def credit_of(meta):
     return CREDIT_FR_JOHN if meta.get("credit") == "fr-john" else CREDIT_CLAUDE
 
+# The mark "✓ Reviewed by Fr. John" appears only on pages he has read and approved.
+# Such a page sets "reviewed": "YYYY-MM-DD" (the date he approved it) in its front matter.
+REVIEWED = "✓ Reviewed by Fr. John"
+
+def reviewed_mark(meta, cls="reviewed"):
+    d = meta.get("reviewed")
+    if not d:
+        return ""
+    nice = datetime.date.fromisoformat(d).strftime("%B %-d, %Y")
+    return f'<span class="{cls}" title="Read and approved by Fr. John on {nice}">{REVIEWED}</span>'
+
+def add_review(body, meta):
+    """Show the review mark under the breadcrumb line."""
+    mark = reviewed_mark(meta)
+    if not mark:
+        return body
+    return re.sub(r'(<p class="crumbs">.*?</p>)', lambda m: m.group(1) + f'\n<p class="review-line">{mark}</p>', body, count=1, flags=re.S)
+
 def fix_ld(ld, meta):
     """Name the true author in structured data and repeat the page's credit line."""
-    if not isinstance(ld, dict) or "author" not in ld:
+    if not isinstance(ld, dict):
         return ld
     ld = dict(ld)
-    if meta.get("credit") == "fr-john":
-        ld["author"] = FOUNDER
-    else:
-        ld["author"] = SITE_ORG
-    ld["creditText"] = credit_of(meta)
+    if "author" in ld:
+        ld["author"] = FOUNDER if meta.get("credit") == "fr-john" else SITE_ORG
+        ld["creditText"] = credit_of(meta)
+    if meta.get("reviewed"):
+        ld["reviewedBy"] = FOUNDER
+        ld["lastReviewed"] = meta["reviewed"]
     return ld
 
 NAV = [
@@ -162,7 +181,7 @@ def page(slug, meta, body):
 <div><h4>Explore</h4><ul>{''.join(f'<li><a href="{h}">{t}</a></li>' for h, t in NAV[1:])}<li><a href="/contact">Contact</a></li><li><a href="/how-this-site-is-made">How This Site Is Made</a></li></ul></div>
 <div><h4>Related study</h4><ul><li><a href="https://thelambsvictory.org/">The Lamb's Victory</a>: Revelation chapter by chapter</li></ul></div>
 </div>
-<p class="credit">{credit_of(meta)} <a href="/how-this-site-is-made">How this site is made</a></p>
+<p class="credit">{credit_of(meta)}{(" " + reviewed_mark(meta)) if meta.get("reviewed") else ""} <a href="/how-this-site-is-made">How this site is made</a></p>
 <p class="fine">{INDEPENDENCE}</p>
 <p class="fine">© {datetime.date.today().year} Fr. John · Scripture quotations are from the New American Bible, Revised Edition © 2010, 1991, 1986, 1970 Confraternity of Christian Doctrine, Washington, D.C., used by permission. All rights reserved.</p>
 </div></footer>
@@ -197,7 +216,7 @@ def main():
         text = f.read_text()
         m = re.match(r"<!--(\{.*?\})-->\n", text, re.S)
         meta, body = json.loads(m.group(1)), text[m.end():]
-        body = link_scripture(body.replace('<!--KEY-->', KEY))
+        body = add_review(link_scripture(body.replace('<!--KEY-->', KEY)), meta)
         html = page(f.stem, meta, body)
         (DIST / f"{f.stem}.html").write_text(html)
         (PREV / f"{f.stem}.html").write_text(to_preview(html))

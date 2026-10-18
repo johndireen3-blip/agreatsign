@@ -154,3 +154,6 @@ a.sref:hover{color:var(--blue);text-decoration-style:solid}
 .dates{margin:4px 0 24px}
 .dates summary{cursor:pointer;font-family:var(--sans);font-weight:600;font-size:.9rem;color:var(--blue);padding:6px 0}
 .dates summary:hover{color:var(--gold)}
+.review-line{margin:6px 0 0}
+.reviewed{display:inline-block;font-family:var(--sans);font-size:.78rem;font-weight:700;letter-spacing:.04em;color:var(--fulfilled);background:var(--fulfilled-bg);border-radius:999px;padding:3px 10px}
+.credit .reviewed{margin-left:4px}
