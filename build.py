@@ -47,7 +47,8 @@ def add_review(body, meta):
     mark = reviewed_mark(meta)
     if not mark:
         return body
-    line = f'<p class="review-line">{mark}</p>'
+    link = "" if meta.get("crumbs", [[None, None]])[-1][1] == "/how-this-site-is-made" else ' <a class="review-how" href="/how-this-site-is-made" target="_blank" rel="noopener">How this site is made</a>'
+    line = f'<p class="review-line">{mark}{link}</p>'
     if '<p class="crumbs">' in body:
         return re.sub(r'(<p class="crumbs">.*?</p>)', lambda m: m.group(1) + "\n" + line, body, count=1, flags=re.S)
     # pages without a breadcrumb (the home page): put the mark at the top of the first content block
