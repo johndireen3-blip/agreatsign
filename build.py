@@ -95,7 +95,7 @@ BOOKS = {"Genesis":"genesis","Exodus":"exodus","Leviticus":"leviticus","Numbers"
 "Philemon":"philemon","Hebrews":"hebrews","James":"james","1 Peter":"1peter","2 Peter":"2peter","1 John":"1john","2 John":"2john",
 "3 John":"3john","Jude":"jude","Revelation":"revelation"}
 _names = sorted(BOOKS, key=len, reverse=True)
-REF = re.compile(r"(?<![\w])(" + "|".join(re.escape(n) for n in _names) + r")\s(\d{1,3})(?:[:.](\d{1,3}[a-z]{0,2}(?:[–-]\d{1,3}[a-z]{0,2})?))?(?:[–-]\d{1,3}(?::\d{1,3})?)?(?![\w:])")
+REF = re.compile(r"(?<![\w])(" + "|".join(re.escape(n) for n in _names) + r")\s(\d{1,3})(?:[:.](\d{1,3}[a-z]{0,2}(?:[–-]\d{1,3}[a-z]{0,2})?))?(?:[–-]\d{1,3}(?::\d{1,3})?)?(?!\w|:\d)")
 SKIP = {"a", "h1", "h2", "h3", "title", "script", "style", "head", "button"}
 
 def link_scripture(html):
