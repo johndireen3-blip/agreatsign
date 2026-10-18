@@ -47,7 +47,11 @@ def add_review(body, meta):
     mark = reviewed_mark(meta)
     if not mark:
         return body
-    return re.sub(r'(<p class="crumbs">.*?</p>)', lambda m: m.group(1) + f'\n<p class="review-line">{mark}</p>', body, count=1, flags=re.S)
+    line = f'<p class="review-line">{mark}</p>'
+    if '<p class="crumbs">' in body:
+        return re.sub(r'(<p class="crumbs">.*?</p>)', lambda m: m.group(1) + "\n" + line, body, count=1, flags=re.S)
+    # pages without a breadcrumb (the home page): put the mark at the top of the first content block
+    return re.sub(r'(</section>\s*<div class="wrap[^"]*">)', lambda m: m.group(1) + "\n" + line, body, count=1)
 
 def fix_ld(ld, meta):
     """Name the true author in structured data and repeat the page's credit line."""

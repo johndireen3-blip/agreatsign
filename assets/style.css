@@ -157,3 +157,4 @@ a.sref:hover{color:var(--blue);text-decoration-style:solid}
 .review-line{margin:6px 0 0}
 .reviewed{display:inline-block;font-family:var(--sans);font-size:.78rem;font-weight:700;letter-spacing:.04em;color:var(--fulfilled);background:var(--fulfilled-bg);border-radius:999px;padding:3px 10px}
 .credit .reviewed{margin-left:4px}
+.wrap>.review-line:first-child{margin-top:20px}
