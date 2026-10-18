@@ -159,3 +159,6 @@ a.sref:hover{color:var(--blue);text-decoration-style:solid}
 .credit .reviewed{margin-left:4px}
 .wrap>.review-line:first-child{margin-top:20px}
 .review-how{font-family:var(--sans);font-size:.85rem;margin-left:8px}
+.logo-about{display:flex;gap:24px;align-items:center;flex-wrap:wrap}
+.logo-about img{flex:0 0 auto;background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:10px}
+.logo-about p{flex:1 1 280px;margin:0}
