@@ -27,7 +27,7 @@ a:hover{color:var(--gold)}
 .nav a{font-family:var(--sans);font-size:.9rem;text-decoration:none;color:var(--ink);padding:8px 10px;border-radius:6px}
 .nav a:hover,.nav a[aria-current=page]{background:var(--blue-soft);color:var(--blue)}
 .nav-toggle{display:none;font-family:var(--sans);background:none;border:1px solid var(--line);border-radius:6px;padding:6px 10px;font-size:.9rem}
-@media (max-width:860px){
+@media (max-width:990px){
   .nav-toggle{display:block}
   .nav{display:none;position:absolute;top:64px;left:0;right:0;background:#fff;border-bottom:1px solid var(--line);padding:8px 20px 16px}
   .nav.open{display:block}

@@ -74,6 +74,7 @@ NAV = [
     ("/fathers-saints-teachers", "Fathers, Saints & Teachers"),
     ("/revelation-12", "Revelation 12"),
     ("/about", "About"),
+    ("/contact", "Contact"),
 ]
 
 LOGO = ('<svg viewBox="0 0 64 64" aria-hidden="true">'
@@ -184,7 +185,7 @@ def page(slug, meta, body):
 <footer class="site-foot"><div class="wrap">
 <div class="cols">
 <div><h4>A Great Sign</h4><p>Biblical prophecy, approved Marian apparitions and the witness of the Fathers and saints, read with the Catholic Church.</p></div>
-<div><h4>Explore</h4><ul>{''.join(f'<li><a href="{h}">{t}</a></li>' for h, t in NAV[1:])}<li><a href="/contact">Contact</a></li><li><a href="/how-this-site-is-made">How This Site Is Made</a></li></ul></div>
+<div><h4>Explore</h4><ul>{''.join(f'<li><a href="{h}">{t}</a></li>' for h, t in NAV[1:])}<li><a href="/how-this-site-is-made">How This Site Is Made</a></li></ul></div>
 <div><h4>Related study</h4><ul><li><a href="https://thelambsvictory.org/" target="_blank" rel="noopener">The Lamb's Victory</a>: Revelation chapter by chapter</li></ul></div>
 </div>
 <p class="credit">{credit_of(meta)}{(" " + reviewed_mark(meta)) if meta.get("reviewed") else ""} <a href="/how-this-site-is-made">How this site is made</a></p>
