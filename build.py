@@ -117,6 +117,43 @@ def link_scripture(html):
             out.append(REF.sub(rep, part))
     return "".join(out)
 
+# Catechism of the Catholic Church: paragraph -> IntraText page on vatican.va (read from the Vatican's own
+# pages, 2026-10-18; ccc_pages.json holds [first, last, page-id] ranges covering paragraphs 1-2865).
+_CCC = json.load(open(ROOT / "ccc_pages.json"))
+def ccc_page(n):
+    for a, z, pid in _CCC:
+        if a <= n <= z:
+            return f"https://www.vatican.va/archive/ENG0015/__P{pid}.HTM"
+    return None
+CCC_REF = re.compile(r"\b(CCC|Catechism)(\s|&nbsp;)(\d{1,4}(?:[–-]\d{1,4})?(?:,\s?\d{1,4}(?:[–-]\d{1,4})?)*)")
+def _ccc_num(numtext):
+    n = int(re.match(r"\d+", numtext).group(0))
+    url = ccc_page(n) if 1 <= n <= 2865 else None
+    return f'<a class="cref" href="{url}" target="_blank" rel="noopener">{numtext}</a>' if url else numtext
+def _ccc_rep(m):
+    word, sp, nums = m.group(1), m.group(2), m.group(3)
+    parts = re.split(r"(,\s?)", nums)
+    first = parts[0]
+    n = int(re.match(r"\d+", first).group(0))
+    url = ccc_page(n) if 1 <= n <= 2865 else None
+    head = f'<a class="cref" href="{url}" target="_blank" rel="noopener">{word}{sp}{first}</a>' if url else f"{word}{sp}{first}"
+    rest = "".join(p if i % 2 == 0 and False else (p if p.startswith(",") else _ccc_num(p)) for i, p in enumerate(parts[1:]))
+    return head + rest
+
+def link_catechism(html):
+    out, depth = [], 0
+    for part in re.split(r"(<[^>]+>)", html):
+        if part.startswith("<"):
+            m = re.match(r"<(/?)([a-zA-Z0-9]+)", part)
+            if m and m.group(2).lower() in SKIP and not part.endswith("/>"):
+                depth += -1 if m.group(1) else 1
+            out.append(part)
+        elif depth > 0 or not part.strip():
+            out.append(part)
+        else:
+            out.append(CCC_REF.sub(_ccc_rep, part))
+    return "".join(out)
+
 KEY = """<details class="key"><summary>Key to the labels</summary>
 <div class="key-grid">
 <div><p class="label">How a passage stands</p>
@@ -228,7 +265,7 @@ def main():
         text = f.read_text()
         m = re.match(r"<!--(\{.*?\})-->\n", text, re.S)
         meta, body = json.loads(m.group(1)), text[m.end():]
-        body = add_review(link_scripture(body.replace('<!--KEY-->', KEY)), meta)
+        body = add_review(link_catechism(link_scripture(body.replace('<!--KEY-->', KEY))), meta)
         html = page(f.stem, meta, body)
         (DIST / f"{f.stem}.html").write_text(html)
         (PREV / f"{f.stem}.html").write_text(to_preview(html))
