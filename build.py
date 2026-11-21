@@ -171,6 +171,50 @@ KEY = """<details class="key"><summary>Key to the labels</summary>
 <p class="key-more"><a href="/the-bible#how-passages-are-labeled">More on the labels</a></p>
 </details>"""
 
+# ---- search-result lengths (Nov 21, 2026): Google cuts titles near 60 characters and descriptions near 160.
+# These shorten only the <title> and the meta description; the page heading and the sharing text keep the full wording.
+def seo_title(t, limit=60):
+    if len(t) <= limit:
+        return t
+    if " | " in t:                                  # drop the site-name suffix first
+        t = t.rsplit(" | ", 1)[0]
+        if len(t) <= limit:
+            return t
+    if ": " in t:                                   # "Head: a, b and c" -> keep whole items that fit
+        head, tail = t.split(": ", 1)
+        import re as _re
+        items = _re.split(r",\s+(?:and\s+)?|\s+and\s+", tail)
+        out = head + ": " + items[0]
+        for it in items[1:]:
+            if len(out) + 2 + len(it) > limit:
+                break
+            out += ", " + it
+        if len(out) <= limit:
+            return out
+        if len(head) <= limit:
+            return head
+    return t
+
+
+def seo_desc(d, limit=158):
+    if len(d) <= limit:
+        return d
+    cut = d[:limit]
+    def _sentence(minimum):
+        best = max(cut.rfind(". "), cut.rfind("; "))
+        return cut[:best].rstrip() + "." if best >= minimum else None
+    s = _sentence(110)                              # a whole sentence if a long one fits
+    if s:
+        return s
+    i = cut.rfind(", ")
+    if i >= 90:
+        s = cut[:i].rstrip()
+        if s.endswith(" and"):
+            s = s[:-4]
+        return s + "."
+    return _sentence(70) or d
+
+
 def page(slug, meta, body):
     path = "/" if slug == "index" else f"/{slug}"
     nav = "".join(
@@ -191,8 +235,8 @@ def page(slug, meta, body):
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>{title}</title>
-<meta name="description" content="{meta['description']}">
+<title>{title if slug == 'index' else seo_title(title)}</title>
+<meta name="description" content="{seo_desc(meta['description'])}">
 <link rel="canonical" href="{SITE}{path}">
 <meta property="og:type" content="{'website' if slug=='index' else 'article'}">
 <meta property="og:site_name" content="A Great Sign">
